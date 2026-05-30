@@ -1,4 +1,5 @@
 using Battleship.Api.DTOs;
+using Battleship.Api.Hosting;
 using Battleship.Api.Mapping;
 using Battleship.Core.AI;
 using Battleship.Core.Engine;
@@ -7,6 +8,7 @@ using Battleship.Core.Validation;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddSingleton(TimeProvider.System);
 builder.Services.AddSingleton<ValidPlacements>();
 builder.Services.AddSingleton<PlayerBoardValidator>();
 builder.Services.AddSingleton<MoveProcessor>();
@@ -14,6 +16,10 @@ builder.Services.AddSingleton(sp => new BotPlacementService(sp.GetRequiredServic
 builder.Services.AddSingleton(_ => new BotTargetingService());
 builder.Services.AddSingleton<GameStore>();
 builder.Services.AddSingleton<GameEngine>();
+
+builder.Services.Configure<GameCleanupOptions>(
+    builder.Configuration.GetSection(GameCleanupOptions.SectionName));
+builder.Services.AddHostedService<GameCleanupService>();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

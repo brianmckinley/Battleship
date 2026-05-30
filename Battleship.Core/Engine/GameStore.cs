@@ -23,6 +23,28 @@ public sealed class GameStore
         _games.TryRemove(gameId, out _);
 
     /// <summary>
+    /// Removes games whose time since last activity exceeds the applicable TTL:
+    /// <paramref name="idleTtl"/> for in-progress games and
+    /// <paramref name="completedTtl"/> for finished ones. Returns the count removed.
+    /// </summary>
+    public int RemoveExpired(DateTimeOffset now, TimeSpan completedTtl, TimeSpan idleTtl)
+    {
+        var removed = 0;
+
+        foreach (var (gameId, game) in _games)
+        {
+            var ttl = game.Status == GameStatus.InProgress ? idleTtl : completedTtl;
+
+            if (now - game.LastActivityAt >= ttl && _games.TryRemove(gameId, out _))
+            {
+                removed++;
+            }
+        }
+
+        return removed;
+    }
+
+    /// <summary>
     /// Returns up to <paramref name="max"/> stored games. Ordering is not
     /// guaranteed because the underlying store is unordered.
     /// </summary>

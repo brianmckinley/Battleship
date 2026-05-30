@@ -13,4 +13,10 @@ public class Game
     public MoveResult? LastPlayerMove { get; set; }
 
     public MoveResult? LastBotMove { get; set; }
+
+    /// <summary>When the game was created (UTC).</summary>
+    public DateTimeOffset CreatedAt { get; init; }
+
+    /// <summary>When the game was last created or moved on (UTC); drives expiry.</summary>
+    public DateTimeOffset LastActivityAt { get; set; }
 }

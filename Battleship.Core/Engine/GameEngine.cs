@@ -19,19 +19,22 @@ public sealed class GameEngine
     private readonly BotTargetingService _botTargeting;
     private readonly MoveProcessor _moveProcessor;
     private readonly GameStore _store;
+    private readonly TimeProvider _timeProvider;
 
     public GameEngine(
         PlayerBoardValidator validator,
         BotPlacementService botPlacement,
         BotTargetingService botTargeting,
         MoveProcessor moveProcessor,
-        GameStore store)
+        GameStore store,
+        TimeProvider timeProvider)
     {
         _validator = validator;
         _botPlacement = botPlacement;
         _botTargeting = botTargeting;
         _moveProcessor = moveProcessor;
         _store = store;
+        _timeProvider = timeProvider;
     }
 
     /// <summary>
@@ -46,12 +49,15 @@ public sealed class GameEngine
             return GameOperationResult.Failure(validation.ErrorCode!, validation.ErrorMessage!);
         }
 
+        var now = _timeProvider.GetUtcNow();
         var game = new Game
         {
             GameId = Guid.NewGuid(),
             PlayerBoard = validation.Board!,
             BotBoard = _botPlacement.CreateBoard(),
             Status = GameStatus.InProgress,
+            CreatedAt = now,
+            LastActivityAt = now,
         };
 
         if (botMovesFirst)
@@ -91,6 +97,7 @@ public sealed class GameEngine
         }
 
         game.LastPlayerMove = playerOutcome.ToMoveResult();
+        game.LastActivityAt = _timeProvider.GetUtcNow();
 
         if (playerOutcome.IsWin)
         {
@@ -116,6 +123,14 @@ public sealed class GameEngine
 
     /// <summary>Returns up to <paramref name="max"/> stored games (default 100).</summary>
     public IReadOnlyList<Game> ListGames(int max = DefaultListLimit) => _store.List(max);
+
+    /// <summary>
+    /// Removes stale games: finished games older than <paramref name="completedTtl"/>
+    /// and idle in-progress games older than <paramref name="idleTtl"/>. Returns the
+    /// number removed.
+    /// </summary>
+    public int PurgeExpiredGames(TimeSpan completedTtl, TimeSpan idleTtl) =>
+        _store.RemoveExpired(_timeProvider.GetUtcNow(), completedTtl, idleTtl);
 
     private void ExecuteBotMove(Game game)
     {

@@ -17,7 +17,8 @@ public class GameEngineTests
             new BotPlacementService(validPlacements, new Random(placementSeed)),
             new BotTargetingService(new Random(targetingSeed)),
             new MoveProcessor(),
-            new GameStore());
+            new GameStore(),
+            TimeProvider.System);
     }
 
     [Fact]
