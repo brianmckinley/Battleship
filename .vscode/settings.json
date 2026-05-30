@@ -1,0 +1,6 @@
+{
+  "omnisharp.dotNetCliPaths": [
+    "/usr/local/share/dotnet/dotnet"
+  ],
+  "dotnet.defaultSolution": "Battleship.sln"
+}

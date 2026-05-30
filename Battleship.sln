@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Battleship.Core", "Battleship.Core\Battleship.Core.csproj", "{56691E94-1895-4913-8358-3A94553765F3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Battleship.Tests", "Battleship.Tests\Battleship.Tests.csproj", "{F2051C0B-E91A-403F-8E04-A65A14996522}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Battleship.Api", "Battleship.Api\Battleship.Api.csproj", "{884FFAE3-50D0-47C8-BBE6-77D7A62FF0CB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{56691E94-1895-4913-8358-3A94553765F3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{56691E94-1895-4913-8358-3A94553765F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{56691E94-1895-4913-8358-3A94553765F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{56691E94-1895-4913-8358-3A94553765F3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F2051C0B-E91A-403F-8E04-A65A14996522}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F2051C0B-E91A-403F-8E04-A65A14996522}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F2051C0B-E91A-403F-8E04-A65A14996522}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F2051C0B-E91A-403F-8E04-A65A14996522}.Release|Any CPU.Build.0 = Release|Any CPU
+		{884FFAE3-50D0-47C8-BBE6-77D7A62FF0CB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{884FFAE3-50D0-47C8-BBE6-77D7A62FF0CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{884FFAE3-50D0-47C8-BBE6-77D7A62FF0CB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{884FFAE3-50D0-47C8-BBE6-77D7A62FF0CB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

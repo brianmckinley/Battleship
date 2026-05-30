@@ -1,0 +1,436 @@
+:root {
+  --cell-size: 2.5rem;
+  --grid-dim: 10;
+  --ocean: #0f2a43;
+  --ocean-cell: #16395c;
+  --ocean-line: #0b1f33;
+  --accent: #2e9bff;
+  --hit: #e23b3b;
+  --miss: #c9d4df;
+  --panel: #0c2236;
+  --text: #eaf2fb;
+  --text-dim: #9bb4cc;
+
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  color: var(--text);
+  background: radial-gradient(circle at top, #14395c, #081726 60%);
+  min-height: 100vh;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+.app {
+  max-width: 68.75rem;
+  margin: 0 auto;
+  padding: 1.5rem 1rem 3rem;
+}
+
+.screen-header {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.screen-header h1 {
+  margin: 0 0 0.25rem;
+  font-size: 1.9rem;
+  letter-spacing: 0.04em;
+}
+
+.subtitle {
+  color: var(--text-dim);
+  margin: 0 auto;
+  max-width: 36rem;
+  font-size: 0.9rem;
+}
+
+kbd {
+  background: #1d4660;
+  border-radius: 0.25rem;
+  padding: 0.05rem 0.35rem;
+  border: 1px solid #2c5d80;
+  font-size: 0.8rem;
+}
+
+/* ---------- Board ---------- */
+.board-frame {
+  position: relative;
+  width: max-content;
+}
+
+.board {
+  display: grid;
+  grid-template-columns: repeat(var(--grid-dim), var(--cell-size));
+  grid-template-rows: repeat(var(--grid-dim), var(--cell-size));
+  gap: 2px;
+  background: var(--ocean-line);
+  padding: 2px;
+  border-radius: 0.5rem;
+  width: max-content;
+}
+
+/* Ship overlays live on their own layer so they never displace cells. */
+.ship-grid {
+  position: absolute;
+  inset: 0;
+  background: transparent;
+  pointer-events: none;
+}
+
+.cell {
+  width: var(--cell-size);
+  height: var(--cell-size);
+  background: var(--ocean-cell);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+}
+
+button.cell {
+  cursor: default;
+  color: inherit;
+}
+
+.cell.target.targetable {
+  cursor: crosshair;
+}
+
+.cell.target.targetable:hover {
+  background: #1f4f78;
+  box-shadow: inset 0 0 0 2px var(--accent);
+}
+
+.setup-cell:hover {
+  background: #1f4f78;
+}
+
+.cell.preview-valid {
+  background: #1f7a4d;
+  box-shadow: inset 0 0 0 2px #38d27f;
+}
+
+.cell.preview-invalid {
+  background: #7a1f1f;
+  box-shadow: inset 0 0 0 2px #e23b3b;
+}
+
+.cell.last-move {
+  box-shadow: inset 0 0 0 2px #ffd24a;
+}
+
+/* Cells beneath a sunk ship get a dark-red wash for an at-a-glance "destroyed" read. */
+.cell.sunk-cell {
+  background: #5a1414;
+}
+
+.cell.target.sunk-cell {
+  cursor: default;
+}
+
+/* ---------- Ship overlays ---------- */
+.ship-overlay {
+  pointer-events: none;
+  width: var(--cell-size);
+  height: var(--cell-size);
+  z-index: 2;
+}
+
+.placed-ship {
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+.ship-segment,
+.ship-overlay {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ship-segment-img {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* Sunk ships read as charred/red and dimmed, on top of the dark-red cell wash. */
+.ship-overlay.sunk {
+  opacity: 0.9;
+  filter: grayscale(1) brightness(0.55) sepia(1) saturate(4) hue-rotate(-25deg);
+}
+
+/* ---------- Markers ---------- */
+.hit-marker {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--hit);
+  font-weight: 800;
+  font-size: 1.4rem;
+  text-shadow: 0 0 3px rgba(0, 0, 0, 0.6);
+  pointer-events: none;
+}
+
+.hit-marker.standalone {
+  position: static;
+}
+
+.miss-marker {
+  width: 0.7rem;
+  height: 0.7rem;
+  border-radius: 50%;
+  background: var(--miss);
+  opacity: 0.7;
+}
+
+/* ---------- Setup layout ---------- */
+.setup-layout {
+  display: flex;
+  gap: 2rem;
+  align-items: flex-start;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.palette {
+  background: var(--panel);
+  border-radius: 0.75rem;
+  padding: 1rem;
+  min-width: 16rem;
+}
+
+.palette h2 {
+  margin: 0 0 0.75rem;
+  font-size: 1.1rem;
+}
+
+.palette-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.palette-item {
+  background: #11304a;
+  border: 1px solid #1d4660;
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  cursor: grab;
+  transition: border-color 0.15s, transform 0.1s;
+}
+
+.palette-item:hover {
+  border-color: var(--accent);
+}
+
+.palette-item.selected {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent);
+}
+
+.palette-item.placed {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.palette-info {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  margin-bottom: 0.35rem;
+}
+
+.palette-length {
+  color: var(--text-dim);
+}
+
+.palette-length.placed {
+  color: #38d27f;
+  font-weight: 600;
+}
+
+.ship-preview {
+  display: flex;
+}
+
+.setup-board-area {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: center;
+}
+
+.setup-controls {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+}
+
+.checkbox {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.85rem;
+  color: var(--text-dim);
+}
+
+/* ---------- Buttons ---------- */
+button {
+  font: inherit;
+  background: #16395c;
+  color: var(--text);
+  border: 1px solid #2c5d80;
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.9rem;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+button:hover:not(:disabled) {
+  background: #1f4f78;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+button.primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  font-weight: 600;
+  padding: 0.6rem 1.5rem;
+}
+
+button.primary:hover:not(:disabled) {
+  background: #1f86e8;
+}
+
+.start-button {
+  align-self: center;
+}
+
+/* ---------- Game screen ---------- */
+.boards {
+  display: flex;
+  gap: 2.5rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.board-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.board-panel h2 {
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.move-log {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+  margin-top: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.move-chip {
+  background: var(--panel);
+  border: 1px solid #1d4660;
+  border-radius: 999px;
+  padding: 0.3rem 0.9rem;
+  font-size: 0.85rem;
+}
+
+.move-chip.hit,
+.move-chip.sunk,
+.move-chip.win {
+  border-color: var(--hit);
+  color: #ff9a9a;
+}
+
+/* ---------- Game over ---------- */
+.game-over-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(4, 12, 22, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+.game-over-card {
+  background: var(--panel);
+  border: 1px solid #2c5d80;
+  border-radius: 1rem;
+  padding: 2.5rem 3rem;
+  text-align: center;
+}
+
+.game-over-card h2 {
+  margin: 0 0 1.25rem;
+  font-size: 2.5rem;
+  letter-spacing: 0.08em;
+}
+
+.game-over-card h2.win {
+  color: #38d27f;
+}
+
+.game-over-card h2.lose {
+  color: #e23b3b;
+}
+
+.error-text {
+  color: #ff9a9a;
+  text-align: center;
+  margin-top: 1rem;
+}
+
+/* ---------- Sink toast ---------- */
+.toast {
+  position: fixed;
+  top: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #5a1414;
+  color: #ffd7d7;
+  border: 1px solid #e23b3b;
+  border-radius: 999px;
+  padding: 0.6rem 1.4rem;
+  font-weight: 600;
+  z-index: 20;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  animation: toast-in 0.2s ease-out;
+}
+
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -0.5rem);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
