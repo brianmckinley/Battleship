@@ -223,3 +223,9 @@ The suite covers bit-layout helpers, placement-mask generation, board validation
 ## Specification
 
 The complete design specification lives in [`Docs/`](Docs/). Start with [`Docs/Battleship-Specification.md`](Docs/Battleship-Specification.md), or read the topic-split files (overview, board encoding, API contract, validation rules, internal engine, placement masks, bot AI, UI design, SVG assets, and project structure).
+
+---
+
+## License
+
+Released under the [MIT License](LICENSE).
